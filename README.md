@@ -91,13 +91,37 @@ The app will be available at http://localhost:5173
 
 ## Deployment
 
-### Vercel Deployment
+### Frontend Deployment (Vercel)
 
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Set up the Neon DB integration in Vercel
-4. Deploy the frontend to Vercel
-5. Deploy the backend to a service like Railway, Render, or Vercel Serverless Functions
+1. **In Vercel Dashboard:**
+   - Import your GitHub repository
+   - Set **Root Directory** to `frontend`
+   - Framework will auto-detect as Vite
+   - Deploy
+
+2. **After first deployment, add environment variable:**
+   - Go to Project Settings → Environment Variables
+   - Add: `VITE_API_URL` = `your-backend-api-url/api`
+   - Redeploy
+
+### Backend Deployment (Railway - Recommended)
+
+1. Go to [Railway.app](https://railway.app)
+2. Create new project from GitHub repo
+3. Select the `backend` directory as root
+4. Add Neon DB connection string as environment variable:
+   - Variable: `DATABASE_URL`
+   - Value: Your Neon DB connection string
+5. Railway will auto-deploy
+
+### Alternative Backend Deployment (Render)
+
+1. Create new Web Service on [Render](https://render.com)
+2. Connect GitHub repository
+3. Set root directory to `backend`
+4. Build command: `pip install -r requirements.txt`
+5. Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+6. Add `DATABASE_URL` environment variable
 
 ## Features
 
