@@ -32,7 +32,7 @@ export function Dashboard({ projects }: DashboardProps) {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="card p-6 transition-shadow">
             <div className="flex items-center justify-between mb-4">
               <p className="text-sm font-medium text-slate-500">Total Projects</p>
               <div className="h-10 w-10 rounded-xl bg-indigo-50 flex items-center justify-center">
@@ -43,7 +43,7 @@ export function Dashboard({ projects }: DashboardProps) {
             <p className="text-sm text-slate-400 mt-1">Projects in workspace</p>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="card p-6 transition-shadow">
             <div className="flex items-center justify-between mb-4">
               <p className="text-sm font-medium text-slate-500">Total Tasks</p>
               <div className="h-10 w-10 rounded-xl bg-emerald-50 flex items-center justify-center">
@@ -54,7 +54,7 @@ export function Dashboard({ projects }: DashboardProps) {
             <p className="text-sm text-slate-400 mt-1">Across all projects</p>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="card p-6 transition-shadow">
             <div className="flex items-center justify-between mb-4">
               <p className="text-sm font-medium text-slate-500">Active Projects</p>
               <div className="h-10 w-10 rounded-xl bg-amber-50 flex items-center justify-center">
@@ -72,7 +72,7 @@ export function Dashboard({ projects }: DashboardProps) {
         </div>
 
         {projects.length === 0 ? (
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
+          <div className="card">
             <div className="flex flex-col items-center justify-center py-20 px-4">
               <div className="h-16 w-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
                 <FolderKanban className="h-8 w-8 text-slate-400" />
@@ -89,7 +89,7 @@ export function Dashboard({ projects }: DashboardProps) {
               const typeInfo = getTypeBadge(project.type);
               return (
                 <Link key={project.id} to={`/project/${project.id}`}>
-                  <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all duration-200 cursor-pointer group h-full">
+                  <div className="card p-6 transition-all duration-200 cursor-pointer group h-full">
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <h3 className="text-lg font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
                         {project.name}
