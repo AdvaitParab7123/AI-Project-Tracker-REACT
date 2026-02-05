@@ -8,8 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
 import {
   Dialog,
   DialogContent,
@@ -56,30 +54,28 @@ export function Sidebar({ projects, onProjectCreated }: SidebarProps) {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'client': return 'bg-blue-500';
-      case 'internal': return 'bg-emerald-500';
-      case 'feature_request': return 'bg-purple-500';
-      default: return 'bg-slate-500';
+      case 'client': return 'bg-blue-400';
+      case 'internal': return 'bg-emerald-400';
+      case 'feature_request': return 'bg-purple-400';
+      default: return 'bg-slate-400';
     }
   };
 
   return (
     <>
-      <div className="flex flex-col h-full w-64 bg-sidebar text-sidebar-foreground border-r border-sidebar-muted/20">
+      <div className="flex flex-col h-full w-64 bg-slate-900 text-slate-100">
         {/* Header */}
-        <div className="p-5">
+        <div className="p-5 border-b border-slate-800">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/20">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-base font-semibold tracking-tight">Project Tracker</h1>
-              <p className="text-xs text-sidebar-foreground/60">AI Adoption Team</p>
+              <h1 className="text-base font-semibold text-white">Project Tracker</h1>
+              <p className="text-xs text-slate-400">AI Adoption Team</p>
             </div>
           </div>
         </div>
-
-        <Separator className="bg-sidebar-muted/30" />
 
         {/* Navigation */}
         <div className="flex-1 overflow-y-auto p-4">
@@ -87,55 +83,53 @@ export function Sidebar({ projects, onProjectCreated }: SidebarProps) {
             {/* Dashboard Link */}
             <div>
               <Link to="/">
-                <Button
-                  variant="ghost"
+                <button
                   className={cn(
-                    "w-full justify-start gap-3 text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent",
-                    location.pathname === '/' && "bg-sidebar-accent text-sidebar-foreground"
+                    "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all duration-150",
+                    location.pathname === '/' && "bg-slate-800 text-white"
                   )}
                 >
                   <Home className="h-4 w-4" />
-                  Dashboard
-                </Button>
+                  <span className="font-medium">Dashboard</span>
+                </button>
               </Link>
             </div>
 
             {/* Projects Section */}
             <div>
-              <div className="flex items-center justify-between mb-3 px-2">
-                <h2 className="text-xs font-semibold text-sidebar-foreground/50 uppercase tracking-wider">
+              <div className="flex items-center justify-between mb-3 px-1">
+                <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                   Projects
                 </h2>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+                <button
                   onClick={() => setIsCreateOpen(true)}
+                  className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-md transition-all duration-150"
                 >
                   <Plus className="h-4 w-4" />
-                </Button>
+                </button>
               </div>
 
               <div className="space-y-1">
                 {projects.map((project) => (
                   <Link key={project.id} to={`/project/${project.id}`}>
-                    <Button
-                      variant="ghost"
+                    <button
                       className={cn(
-                        "w-full justify-start gap-3 text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent font-normal",
-                        location.pathname === `/project/${project.id}` && "bg-sidebar-accent text-sidebar-foreground"
+                        "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all duration-150 text-left",
+                        location.pathname === `/project/${project.id}` && "bg-slate-800 text-white"
                       )}
                     >
                       <span className={cn("w-2 h-2 rounded-full flex-shrink-0", getTypeColor(project.type))} />
-                      <span className="truncate">{project.name}</span>
-                    </Button>
+                      <span className="truncate text-sm">{project.name}</span>
+                    </button>
                   </Link>
                 ))}
                 {projects.length === 0 && (
-                  <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
-                    <FolderKanban className="h-10 w-10 text-sidebar-foreground/20 mb-3" />
-                    <p className="text-sm text-sidebar-foreground/40">No projects yet</p>
-                    <p className="text-xs text-sidebar-foreground/30 mt-1">Click + to create one</p>
+                  <div className="flex flex-col items-center justify-center py-10 px-4 text-center">
+                    <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center mb-3">
+                      <FolderKanban className="h-6 w-6 text-slate-600" />
+                    </div>
+                    <p className="text-sm text-slate-500">No projects yet</p>
+                    <p className="text-xs text-slate-600 mt-1">Click + to create one</p>
                   </div>
                 )}
               </div>
@@ -143,19 +137,15 @@ export function Sidebar({ projects, onProjectCreated }: SidebarProps) {
           </div>
         </div>
 
-        <Separator className="bg-sidebar-muted/30" />
-
         {/* User Profile */}
-        <div className="p-4">
+        <div className="p-4 border-t border-slate-800">
           <div className="flex items-center gap-3">
-            <Avatar className="h-9 w-9">
-              <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-xs font-medium">
-                AT
-              </AvatarFallback>
-            </Avatar>
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xs font-semibold text-white shadow-lg shadow-indigo-500/20">
+              AT
+            </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">AI Team</p>
-              <p className="text-xs text-sidebar-foreground/50 truncate">Open Access</p>
+              <p className="text-sm font-medium text-white truncate">AI Team</p>
+              <p className="text-xs text-slate-400 truncate">Open Access</p>
             </div>
           </div>
         </div>
