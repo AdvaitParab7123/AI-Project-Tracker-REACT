@@ -42,13 +42,115 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Enhanced card styles */
 .card {
   background-color: white;
   border: 1px solid #e2e8f0;
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  border-radius: 0.875rem;
+  box-shadow: 
+    0 1px 3px 0 rgb(0 0 0 / 0.05),
+    0 1px 2px -1px rgb(0 0 0 / 0.05),
+    0 0 0 1px rgb(0 0 0 / 0.02);
+  transition: all 0.2s ease-in-out;
 }
 
 .card:hover {
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  box-shadow: 
+    0 10px 25px -5px rgb(0 0 0 / 0.08),
+    0 8px 10px -6px rgb(0 0 0 / 0.04),
+    0 0 0 1px rgb(0 0 0 / 0.02);
+  transform: translateY(-1px);
+}
+
+/* Stat card specific styles */
+.stat-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  box-shadow: 
+    0 1px 3px 0 rgb(0 0 0 / 0.04),
+    0 4px 6px -2px rgb(0 0 0 / 0.02);
+  transition: all 0.25s ease-in-out;
+}
+
+.stat-card:hover {
+  box-shadow: 
+    0 12px 28px -8px rgb(79 70 229 / 0.12),
+    0 4px 8px -4px rgb(0 0 0 / 0.04);
+  border-color: #c7d2fe;
+  transform: translateY(-2px);
+}
+
+/* Project card styles */
+.project-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  box-shadow: 
+    0 1px 3px 0 rgb(0 0 0 / 0.04),
+    0 2px 4px -1px rgb(0 0 0 / 0.02);
+  transition: all 0.25s ease-in-out;
+}
+
+.project-card:hover {
+  box-shadow: 
+    0 16px 32px -8px rgb(79 70 229 / 0.15),
+    0 8px 16px -8px rgb(0 0 0 / 0.06);
+  border-color: #a5b4fc;
+  transform: translateY(-3px);
+}
+
+/* Empty state card */
+.empty-state-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px dashed #cbd5e1;
+  border-radius: 1rem;
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Focus ring utility */
+.focus-ring {
+  outline: none;
+}
+
+.focus-ring:focus-visible {
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #6366f1;
+}
+
+/* Animation utilities */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
 }

@@ -132,12 +132,12 @@ export function ProjectPage({ onUpdate }: ProjectPageProps) {
   }
 
   return (
-    <div className="h-full flex flex-col bg-gradient-to-br from-slate-50 to-slate-100/50">
+    <div className="h-full flex flex-col bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
       {/* Header */}
-      <div className="px-8 py-6 bg-white/80 backdrop-blur border-b border-slate-200/50">
+      <div className="px-8 py-6 bg-white/90 backdrop-blur-md border-b border-slate-200/60 shadow-sm">
         <h1 className="text-2xl font-bold text-slate-900 tracking-tight">{project.name}</h1>
         {project.description && (
-          <p className="text-slate-500 mt-1">{project.description}</p>
+          <p className="text-slate-500 mt-1.5 max-w-2xl leading-relaxed">{project.description}</p>
         )}
       </div>
 
@@ -149,19 +149,19 @@ export function ProjectPage({ onUpdate }: ProjectPageProps) {
               <div 
                 key={column.id} 
                 className={cn(
-                  "w-80 flex-shrink-0 flex flex-col rounded-xl bg-gradient-to-b",
+                  "w-80 flex-shrink-0 flex flex-col rounded-2xl bg-gradient-to-b shadow-sm",
                   getColumnColor(columnIndex)
                 )}
               >
                 {/* Column Header */}
                 <div className="p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-slate-700">{column.name}</h3>
-                    <span className="text-xs font-medium text-slate-500 bg-white/60 px-2 py-0.5 rounded-full">
+                  <div className="flex items-center gap-2.5">
+                    <h3 className="font-bold text-slate-700">{column.name}</h3>
+                    <span className="text-xs font-bold text-slate-500 bg-white/80 px-2.5 py-1 rounded-full shadow-sm">
                       {column.tasks.length}
                     </span>
                   </div>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-slate-600">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-slate-600 hover:bg-white/50 rounded-lg">
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </div>
@@ -186,8 +186,8 @@ export function ProjectPage({ onUpdate }: ProjectPageProps) {
                               {...provided.dragHandleProps}
                               onClick={() => setSelectedTaskId(task.id)}
                               className={cn(
-                                "border-0 shadow-sm cursor-pointer hover:shadow-md transition-all duration-200 bg-white",
-                                snapshot.isDragging && "shadow-lg ring-2 ring-indigo-500/20"
+                                "border border-slate-200/60 shadow-sm cursor-pointer hover:shadow-lg hover:border-indigo-200 transition-all duration-200 bg-white rounded-xl",
+                                snapshot.isDragging && "shadow-xl ring-2 ring-indigo-500/30 scale-[1.02]"
                               )}
                             >
                               <CardContent className="p-4">
@@ -196,9 +196,9 @@ export function ProjectPage({ onUpdate }: ProjectPageProps) {
                                   <p className="text-sm font-medium text-slate-900 leading-snug">{task.title}</p>
                                 </div>
                                 {task.description && (
-                                  <p className="text-xs text-slate-500 line-clamp-2 ml-4.5 mb-2">{task.description}</p>
+                                  <p className="text-xs text-slate-500 line-clamp-2 ml-5 mb-2">{task.description}</p>
                                 )}
-                                <div className="flex items-center gap-3 mt-3 ml-4.5">
+                                <div className="flex items-center gap-3 mt-3 ml-5">
                                   {task.checklists.length > 0 && (
                                     <span className="flex items-center gap-1 text-xs text-slate-400">
                                       <CheckSquare className="h-3.5 w-3.5" />
@@ -232,14 +232,14 @@ export function ProjectPage({ onUpdate }: ProjectPageProps) {
                 {/* Add Task */}
                 <div className="p-3">
                   {addingTaskColumnId === column.id ? (
-                    <Card className="border-0 shadow-sm bg-white">
-                      <CardContent className="p-3">
+                    <Card className="border border-slate-200/60 shadow-md bg-white rounded-xl">
+                      <CardContent className="p-4">
                         <Input
                           value={newTaskTitle}
                           onChange={(e) => setNewTaskTitle(e.target.value)}
                           onKeyDown={(e) => e.key === 'Enter' && handleAddTask(column.id)}
                           placeholder="Enter task title..."
-                          className="mb-2 border-slate-200"
+                          className="mb-3 border-slate-200"
                           autoFocus
                         />
                         <div className="flex gap-2">
@@ -262,7 +262,7 @@ export function ProjectPage({ onUpdate }: ProjectPageProps) {
                   ) : (
                     <Button
                       variant="ghost"
-                      className="w-full justify-start gap-2 text-slate-500 hover:text-slate-700 hover:bg-white/50"
+                      className="w-full justify-start gap-2 text-slate-500 hover:text-indigo-600 hover:bg-white/60 rounded-xl transition-all duration-200"
                       onClick={() => setAddingTaskColumnId(column.id)}
                     >
                       <Plus className="h-4 w-4" />
