@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
-import { X, Trash2, Plus, Check, MessageSquare, Calendar } from 'lucide-react';
+import { X, Trash2, Plus, Check, MessageSquare } from 'lucide-react';
 import { tasksAPI, checklistsAPI, commentsAPI } from '../lib/api';
-import { Task, Checklist, Comment } from '../types';
+import type { Task } from '../types';
 import { cn } from '../lib/utils';
-import { formatDistanceToNow, format } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 
 interface TaskModalProps {
   taskId: string;

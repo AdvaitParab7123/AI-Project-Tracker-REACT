@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Project } from '../types';
+import type { Project } from '../types';
 
 interface DashboardProps {
   projects: Project[];

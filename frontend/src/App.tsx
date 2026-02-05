@@ -4,7 +4,7 @@ import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './pages/Dashboard';
 import { ProjectPage } from './pages/ProjectPage';
 import { projectsAPI } from './lib/api';
-import { Project } from './types';
+import type { Project } from './types';
 
 function App() {
   const [projects, setProjects] = useState<Project[]>([]);

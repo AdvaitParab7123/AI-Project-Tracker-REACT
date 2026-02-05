@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Home, Plus, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { projectsAPI } from '../lib/api';
-import { Project } from '../types';
+import type { Project } from '../types';
 
 interface SidebarProps {
   projects: Project[];

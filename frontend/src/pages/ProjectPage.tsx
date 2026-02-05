@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import type { DropResult } from '@hello-pangea/dnd';
 import { Plus, MoreHorizontal } from 'lucide-react';
 import { projectsAPI, tasksAPI } from '../lib/api';
-import { Project, Task, Column } from '../types';
+import type { Project } from '../types';
 import { TaskModal } from '../components/TaskModal';
 import { cn } from '../lib/utils';
 
@@ -38,7 +39,7 @@ export function ProjectPage({ onUpdate }: ProjectPageProps) {
   const handleDragEnd = async (result: DropResult) => {
     if (!result.destination || !project) return;
 
-    const { source, destination, draggableId } = result;
+    const { source, destination } = result;
     
     if (source.droppableId === destination.droppableId && source.index === destination.index) {
       return;
