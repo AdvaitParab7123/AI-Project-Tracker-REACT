@@ -2,11 +2,14 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import type { DropResult } from '@hello-pangea/dnd';
-import { Plus, MoreHorizontal } from 'lucide-react';
-import { projectsAPI, tasksAPI } from '../lib/api';
-import type { Project } from '../types';
-import { TaskModal } from '../components/TaskModal';
-import { cn } from '../lib/utils';
+import { Plus, MoreHorizontal, MessageSquare, CheckSquare, Calendar, Loader2 } from 'lucide-react';
+import { projectsAPI, tasksAPI } from '@/lib/api';
+import type { Project } from '@/types';
+import { TaskModal } from '@/components/TaskModal';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface ProjectPageProps {
   onUpdate: () => void;
@@ -45,28 +48,21 @@ export function ProjectPage({ onUpdate }: ProjectPageProps) {
       return;
     }
 
-    // Clone columns
     const newColumns = [...project.columns];
     const sourceColumn = newColumns.find(col => col.id === source.droppableId);
     const destColumn = newColumns.find(col => col.id === destination.droppableId);
     
     if (!sourceColumn || !destColumn) return;
 
-    // Remove from source
     const [movedTask] = sourceColumn.tasks.splice(source.index, 1);
-    
-    // Add to destination
     movedTask.column_id = destination.droppableId;
     destColumn.tasks.splice(destination.index, 0, movedTask);
 
-    // Update positions
     sourceColumn.tasks.forEach((task, idx) => { task.position = idx; });
     destColumn.tasks.forEach((task, idx) => { task.position = idx; });
 
-    // Update state optimistically
     setProject({ ...project, columns: newColumns });
 
-    // Prepare tasks to reorder
     const tasksToUpdate = [
       ...sourceColumn.tasks.map(t => ({ id: t.id, column_id: t.column_id, position: t.position })),
       ...destColumn.tasks.map(t => ({ id: t.id, column_id: t.column_id, position: t.position }))
@@ -76,7 +72,7 @@ export function ProjectPage({ onUpdate }: ProjectPageProps) {
       await tasksAPI.reorder(tasksToUpdate);
     } catch (error) {
       console.error('Failed to reorder tasks:', error);
-      fetchProject(); // Revert on error
+      fetchProject();
     }
   };
 
@@ -97,55 +93,77 @@ export function ProjectPage({ onUpdate }: ProjectPageProps) {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high': return 'bg-red-500';
-      case 'medium': return 'bg-yellow-500';
-      case 'low': return 'bg-green-500';
-      default: return 'bg-gray-400';
+      case 'medium': return 'bg-amber-500';
+      case 'low': return 'bg-emerald-500';
+      default: return 'bg-slate-400';
     }
+  };
+
+  const getColumnColor = (index: number) => {
+    const colors = [
+      'from-slate-500/10 to-slate-500/5',
+      'from-blue-500/10 to-blue-500/5',
+      'from-emerald-500/10 to-emerald-500/5',
+      'from-purple-500/10 to-purple-500/5',
+    ];
+    return colors[index % colors.length];
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      <div className="flex items-center justify-center h-full bg-gradient-to-br from-slate-50 to-slate-100/50">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+          <p className="text-sm text-slate-500">Loading project...</p>
+        </div>
       </div>
     );
   }
 
   if (!project) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-gray-500">Project not found</p>
+      <div className="flex items-center justify-center h-full bg-gradient-to-br from-slate-50 to-slate-100/50">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">Project not found</h2>
+          <p className="text-slate-500">The project you're looking for doesn't exist.</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-gradient-to-br from-slate-50 to-slate-100/50">
       {/* Header */}
-      <div className="p-6 border-b bg-white">
-        <h1 className="text-2xl font-bold text-gray-900">{project.name}</h1>
+      <div className="px-8 py-6 bg-white/80 backdrop-blur border-b border-slate-200/50">
+        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">{project.name}</h1>
         {project.description && (
-          <p className="text-gray-500 mt-1">{project.description}</p>
+          <p className="text-slate-500 mt-1">{project.description}</p>
         )}
       </div>
 
       {/* Kanban Board */}
       <DragDropContext onDragEnd={handleDragEnd}>
         <div className="flex-1 overflow-x-auto p-6">
-          <div className="flex gap-4 h-full min-w-max">
-            {project.columns.map((column) => (
-              <div key={column.id} className="w-72 flex-shrink-0 flex flex-col bg-gray-200 rounded-xl">
+          <div className="flex gap-5 h-full min-w-max">
+            {project.columns.map((column, columnIndex) => (
+              <div 
+                key={column.id} 
+                className={cn(
+                  "w-80 flex-shrink-0 flex flex-col rounded-xl bg-gradient-to-b",
+                  getColumnColor(columnIndex)
+                )}
+              >
                 {/* Column Header */}
-                <div className="p-3 flex items-center justify-between">
+                <div className="p-4 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-gray-700">{column.name}</h3>
-                    <span className="text-sm text-gray-500 bg-gray-300 px-2 py-0.5 rounded-full">
+                    <h3 className="font-semibold text-slate-700">{column.name}</h3>
+                    <span className="text-xs font-medium text-slate-500 bg-white/60 px-2 py-0.5 rounded-full">
                       {column.tasks.length}
                     </span>
                   </div>
-                  <button className="text-gray-400 hover:text-gray-600">
-                    <MoreHorizontal size={18} />
-                  </button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-slate-600">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
                 </div>
 
                 {/* Tasks */}
@@ -155,47 +173,54 @@ export function ProjectPage({ onUpdate }: ProjectPageProps) {
                       ref={provided.innerRef}
                       {...provided.droppableProps}
                       className={cn(
-                        "flex-1 p-2 space-y-2 overflow-y-auto min-h-[100px]",
-                        snapshot.isDraggingOver && "bg-gray-300"
+                        "flex-1 px-3 pb-3 space-y-3 overflow-y-auto min-h-[120px] transition-colors rounded-lg mx-1",
+                        snapshot.isDraggingOver && "bg-white/40"
                       )}
                     >
                       {column.tasks.map((task, index) => (
                         <Draggable key={task.id} draggableId={task.id} index={index}>
                           {(provided, snapshot) => (
-                            <div
+                            <Card
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
                               onClick={() => setSelectedTaskId(task.id)}
                               className={cn(
-                                "bg-white rounded-lg p-3 shadow-sm cursor-pointer hover:shadow-md transition-shadow",
-                                snapshot.isDragging && "shadow-lg"
+                                "border-0 shadow-sm cursor-pointer hover:shadow-md transition-all duration-200 bg-white",
+                                snapshot.isDragging && "shadow-lg ring-2 ring-indigo-500/20"
                               )}
                             >
-                              <div className="flex items-start gap-2 mb-2">
-                                <span className={cn("w-2 h-2 rounded-full mt-1.5 flex-shrink-0", getPriorityColor(task.priority))} />
-                                <p className="text-sm font-medium text-gray-900">{task.title}</p>
-                              </div>
-                              {task.description && (
-                                <p className="text-xs text-gray-500 line-clamp-2 ml-4">{task.description}</p>
-                              )}
-                              <div className="flex items-center gap-2 mt-2 ml-4">
-                                {task.checklists.length > 0 && (
-                                  <span className="text-xs text-gray-400">
-                                    ✓ {task.checklists.reduce((sum, cl) => sum + cl.items.filter(i => i.completed).length, 0)}/
-                                    {task.checklists.reduce((sum, cl) => sum + cl.items.length, 0)}
-                                  </span>
+                              <CardContent className="p-4">
+                                <div className="flex items-start gap-2.5 mb-2">
+                                  <span className={cn("w-2 h-2 rounded-full mt-1.5 flex-shrink-0", getPriorityColor(task.priority))} />
+                                  <p className="text-sm font-medium text-slate-900 leading-snug">{task.title}</p>
+                                </div>
+                                {task.description && (
+                                  <p className="text-xs text-slate-500 line-clamp-2 ml-4.5 mb-2">{task.description}</p>
                                 )}
-                                {(task.comments_count || 0) > 0 && (
-                                  <span className="text-xs text-gray-400">💬 {task.comments_count}</span>
-                                )}
-                                {task.due_date && (
-                                  <span className="text-xs text-gray-400">
-                                    📅 {new Date(task.due_date).toLocaleDateString()}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
+                                <div className="flex items-center gap-3 mt-3 ml-4.5">
+                                  {task.checklists.length > 0 && (
+                                    <span className="flex items-center gap-1 text-xs text-slate-400">
+                                      <CheckSquare className="h-3.5 w-3.5" />
+                                      {task.checklists.reduce((sum, cl) => sum + cl.items.filter(i => i.completed).length, 0)}/
+                                      {task.checklists.reduce((sum, cl) => sum + cl.items.length, 0)}
+                                    </span>
+                                  )}
+                                  {(task.comments_count || 0) > 0 && (
+                                    <span className="flex items-center gap-1 text-xs text-slate-400">
+                                      <MessageSquare className="h-3.5 w-3.5" />
+                                      {task.comments_count}
+                                    </span>
+                                  )}
+                                  {task.due_date && (
+                                    <span className="flex items-center gap-1 text-xs text-slate-400">
+                                      <Calendar className="h-3.5 w-3.5" />
+                                      {new Date(task.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                    </span>
+                                  )}
+                                </div>
+                              </CardContent>
+                            </Card>
                           )}
                         </Draggable>
                       ))}
@@ -205,44 +230,44 @@ export function ProjectPage({ onUpdate }: ProjectPageProps) {
                 </Droppable>
 
                 {/* Add Task */}
-                <div className="p-2">
+                <div className="p-3">
                   {addingTaskColumnId === column.id ? (
-                    <div className="bg-white rounded-lg p-3 shadow-sm">
-                      <input
-                        type="text"
-                        value={newTaskTitle}
-                        onChange={(e) => setNewTaskTitle(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleAddTask(column.id)}
-                        placeholder="Enter task title..."
-                        className="w-full text-sm border-none outline-none"
-                        autoFocus
-                      />
-                      <div className="flex gap-2 mt-2">
-                        <button
-                          onClick={() => handleAddTask(column.id)}
-                          className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
-                        >
-                          Add
-                        </button>
-                        <button
-                          onClick={() => {
-                            setAddingTaskColumnId(null);
-                            setNewTaskTitle('');
-                          }}
-                          className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
+                    <Card className="border-0 shadow-sm bg-white">
+                      <CardContent className="p-3">
+                        <Input
+                          value={newTaskTitle}
+                          onChange={(e) => setNewTaskTitle(e.target.value)}
+                          onKeyDown={(e) => e.key === 'Enter' && handleAddTask(column.id)}
+                          placeholder="Enter task title..."
+                          className="mb-2 border-slate-200"
+                          autoFocus
+                        />
+                        <div className="flex gap-2">
+                          <Button size="sm" onClick={() => handleAddTask(column.id)}>
+                            Add Task
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => {
+                              setAddingTaskColumnId(null);
+                              setNewTaskTitle('');
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
                   ) : (
-                    <button
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start gap-2 text-slate-500 hover:text-slate-700 hover:bg-white/50"
                       onClick={() => setAddingTaskColumnId(column.id)}
-                      className="w-full flex items-center gap-2 p-2 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-300 rounded-lg transition-colors"
                     >
-                      <Plus size={16} />
+                      <Plus className="h-4 w-4" />
                       Add a task
-                    </button>
+                    </Button>
                   )}
                 </div>
               </div>

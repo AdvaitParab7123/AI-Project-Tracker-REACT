@@ -1,17 +1,21 @@
 import { Link } from 'react-router-dom';
-import type { Project } from '../types';
+import { FolderKanban, ListTodo, Activity, ArrowRight, Calendar } from 'lucide-react';
+import type { Project } from '@/types';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 interface DashboardProps {
   projects: Project[];
 }
 
 export function Dashboard({ projects }: DashboardProps) {
-  const getTypeLabel = (type: string) => {
+  const getTypeBadge = (type: string) => {
     switch (type) {
-      case 'client': return { label: 'Client Project', color: 'bg-blue-100 text-blue-800' };
-      case 'internal': return { label: 'Internal', color: 'bg-green-100 text-green-800' };
-      case 'feature_request': return { label: 'Feature Request', color: 'bg-purple-100 text-purple-800' };
-      default: return { label: 'General', color: 'bg-gray-100 text-gray-800' };
+      case 'client': return { label: 'Client', variant: 'info' as const };
+      case 'internal': return { label: 'Internal', variant: 'success' as const };
+      case 'feature_request': return { label: 'Feature', variant: 'purple' as const };
+      default: return { label: 'General', variant: 'secondary' as const };
     }
   };
 
@@ -19,65 +23,122 @@ export function Dashboard({ projects }: DashboardProps) {
   const activeProjects = projects.filter((p) => (p.task_count || 0) > 0).length;
 
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600 mt-1">Welcome to the AI Adoption Team Project Tracker</p>
-      </div>
+    <div className="min-h-full bg-gradient-to-br from-slate-50 to-slate-100/50">
+      <div className="p-8 max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Dashboard</h1>
+          <p className="text-slate-500 mt-1">Welcome to the AI Adoption Team Project Tracker</p>
+        </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <p className="text-sm text-gray-500">Total Projects</p>
-          <p className="text-4xl font-bold text-gray-900 mt-1">{projects.length}</p>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <p className="text-sm text-gray-500">Total Tasks</p>
-          <p className="text-4xl font-bold text-gray-900 mt-1">{totalTasks}</p>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <p className="text-sm text-gray-500">Active Projects</p>
-          <p className="text-4xl font-bold text-gray-900 mt-1">{activeProjects}</p>
-        </div>
-      </div>
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Card className="border-0 shadow-sm bg-white/80 backdrop-blur">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-slate-500">Total Projects</CardTitle>
+              <div className="h-9 w-9 rounded-lg bg-indigo-100 flex items-center justify-center">
+                <FolderKanban className="h-5 w-5 text-indigo-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-slate-900">{projects.length}</div>
+              <p className="text-xs text-slate-500 mt-1">Projects in workspace</p>
+            </CardContent>
+          </Card>
 
-      {/* Projects Grid */}
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold text-gray-900">Your Projects</h2>
-      </div>
+          <Card className="border-0 shadow-sm bg-white/80 backdrop-blur">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-slate-500">Total Tasks</CardTitle>
+              <div className="h-9 w-9 rounded-lg bg-emerald-100 flex items-center justify-center">
+                <ListTodo className="h-5 w-5 text-emerald-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-slate-900">{totalTasks}</div>
+              <p className="text-xs text-slate-500 mt-1">Across all projects</p>
+            </CardContent>
+          </Card>
 
-      {projects.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-          <p className="text-gray-500 mb-4">
-            No projects yet. Create your first project using the + button in the sidebar.
-          </p>
+          <Card className="border-0 shadow-sm bg-white/80 backdrop-blur">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-slate-500">Active Projects</CardTitle>
+              <div className="h-9 w-9 rounded-lg bg-amber-100 flex items-center justify-center">
+                <Activity className="h-5 w-5 text-amber-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-slate-900">{activeProjects}</div>
+              <p className="text-xs text-slate-500 mt-1">With active tasks</p>
+            </CardContent>
+          </Card>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project) => {
-            const typeInfo = getTypeLabel(project.type);
-            return (
-              <Link key={project.id} to={`/project/${project.id}`}>
-                <div className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow cursor-pointer h-full">
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900">{project.name}</h3>
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${typeInfo.color}`}>
-                      {typeInfo.label}
-                    </span>
-                  </div>
-                  <p className="text-gray-500 text-sm mb-4 line-clamp-2">
-                    {project.description || 'No description'}
-                  </p>
-                  <div className="flex items-center justify-between text-sm text-gray-400">
-                    <span>{project.task_count || 0} tasks</span>
-                    <span>Created {new Date(project.created_at).toLocaleDateString()}</span>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
+
+        {/* Projects Section */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-slate-900">Your Projects</h2>
+          </div>
         </div>
-      )}
+
+        {projects.length === 0 ? (
+          <Card className="border-0 shadow-sm bg-white/80 backdrop-blur">
+            <CardContent className="flex flex-col items-center justify-center py-16">
+              <div className="h-16 w-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
+                <FolderKanban className="h-8 w-8 text-slate-400" />
+              </div>
+              <h3 className="text-lg font-medium text-slate-900 mb-2">No projects yet</h3>
+              <p className="text-slate-500 text-center max-w-sm mb-4">
+                Create your first project using the + button in the sidebar to get started.
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {projects.map((project) => {
+              const typeInfo = getTypeBadge(project.type);
+              return (
+                <Link key={project.id} to={`/project/${project.id}`}>
+                  <Card className="border-0 shadow-sm bg-white/80 backdrop-blur hover:shadow-md transition-all duration-200 cursor-pointer group h-full">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <CardTitle className="text-lg font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
+                          {project.name}
+                        </CardTitle>
+                        <Badge variant={typeInfo.variant} className="shrink-0">
+                          {typeInfo.label}
+                        </Badge>
+                      </div>
+                      <CardDescription className="line-clamp-2 mt-1">
+                        {project.description || 'No description provided'}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4 text-sm text-slate-500">
+                          <span className="flex items-center gap-1.5">
+                            <ListTodo className="h-4 w-4" />
+                            {project.task_count || 0} tasks
+                          </span>
+                          <span className="flex items-center gap-1.5">
+                            <Calendar className="h-4 w-4" />
+                            {new Date(project.created_at).toLocaleDateString('en-US', { 
+                              month: 'short', 
+                              day: 'numeric' 
+                            })}
+                          </span>
+                        </div>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <ArrowRight className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
